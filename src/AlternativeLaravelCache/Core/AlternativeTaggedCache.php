@@ -39,11 +39,11 @@ class AlternativeTaggedCache extends TaggedCache {
      * @param  string $key
      * @param  mixed $value
      * @param  \DateTime|int $ttl - seconds for Laravel >= 5.8 or minutes for Laravel <= 5.7
-     * @return void
+     * @return bool
      */
     public function put($key, $value, $ttl = null) {
         $this->sendTagsToStore();
-        parent::put($key, $value, $ttl);
+        return parent::put($key, $value, $ttl);
     }
 
     /**
@@ -51,11 +51,11 @@ class AlternativeTaggedCache extends TaggedCache {
      *
      * @param  array $values
      * @param  int $ttl  - seconds for Laravel >= 5.8 or minutes for Laravel <= 5.7
-     * @return void
+     * @return bool
      */
     public function putMany(array $values, $ttl = null) {
         $this->sendTagsToStore();
-        parent::putMany($values, $ttl);
+        return parent::putMany($values, $ttl);
     }
 
     /**
@@ -63,11 +63,11 @@ class AlternativeTaggedCache extends TaggedCache {
      *
      * @param  string $key
      * @param  mixed $value
-     * @return void
+     * @return bool
      */
     public function forever($key, $value) {
         $this->sendTagsToStore();
-        parent::forever($key, $value);
+        return parent::forever($key, $value);
     }
 
     /**

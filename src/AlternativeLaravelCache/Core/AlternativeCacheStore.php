@@ -151,11 +151,11 @@ abstract class AlternativeCacheStore extends TaggableStore implements Store {
      * @param  string $key
      * @param  mixed $value
      * @param  int $duration - seconds for Laravel >= 5.8 or minutes for Laravel <= 5.7
-     * @return void
+     * @return bool
      * @throws \Psr\Cache\InvalidArgumentException
      */
     public function put($key, $value, $duration) {
-        $this->getWrappedConnection()->save($this->newItem($key, $value, $this->_pullTags(), $duration));
+        return $this->getWrappedConnection()->save($this->newItem($key, $value, $this->_pullTags(), $duration));
     }
 
     /**
@@ -163,17 +163,17 @@ abstract class AlternativeCacheStore extends TaggableStore implements Store {
      *
      * @param  array $values
      * @param  int $duration - seconds for Laravel >= 5.8 or minutes for Laravel <= 5.7
-     * @return void
+     * @return bool
      */
     public function putMany(array $values, $duration) {
         if (!count($values)) {
-            return;
+            return false;
         }
         $tags = $this->_pullTags();
         foreach ($values as $key => $value) {
             $this->getWrappedConnection()->saveDeferred($this->newItem($key, $value, $tags));
         }
-        $this->getWrappedConnection()->commit();
+        return $this->getWrappedConnection()->commit();
     }
 
     /**
@@ -221,11 +221,11 @@ abstract class AlternativeCacheStore extends TaggableStore implements Store {
      *
      * @param  string $key
      * @param  mixed $value
-     * @return void
+     * @return bool
      * @throws \Psr\Cache\InvalidArgumentException
      */
     public function forever($key, $value) {
-        $this->getWrappedConnection()->save($this->newItem($key, $value, $this->_pullTags()));
+        return $this->getWrappedConnection()->save($this->newItem($key, $value, $this->_pullTags()));
     }
 
     /**
