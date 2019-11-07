@@ -2,8 +2,10 @@
 
 namespace Tests;
 
+use AlternativeLaravelCache\Provider\AlternativeCacheStoresServiceProvider;
 use AlternativeLaravelCache\Store\AlternativeFileCacheStore;
 use AlternativeLaravelCache\Store\AlternativeRedisCacheStore;
+use Orchestra\Testbench\TestCase;
 
 class AlternativeLaravelCacheTest extends TestCase {
 
@@ -30,6 +32,62 @@ class AlternativeLaravelCacheTest extends TestCase {
             'prefix' => 'laravel/testcache'
         ]
      */
+    protected function getPackageProviders($app)
+    {
+        return [
+            AlternativeCacheStoresServiceProvider::class,
+        ];
+    }
+
+    protected function getEnvironmentSetUp($app)
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['config']->set('cache', [
+            'stores' => [
+                'test_file' => [
+                    'driver' => 'file',
+                    'path' => storage_path('framework/cache/data'),
+                    'permissions' => [
+                        'file' => [
+                            'public' => 0644,
+                        ],
+                        'dir' => [
+                            'public' => 0755,
+                        ],
+                    ]
+                ],
+                'test_hierarchial_file' => [
+                    'driver' => 'hierarchial_file',
+                    'path' => storage_path('framework/cache/data'),
+                    'permissions' => [
+                        'file' => [
+                            'public' => 0644,
+                        ],
+                        'dir' => [
+                            'public' => 0755,
+                        ],
+                    ]
+                ],
+                'test_redis' => [
+                    'driver' => 'redis',
+                    'connection' => 'default',
+                ],
+            ]
+        ]);
+
+        $app['config']->set('database', [
+            'redis' => [
+                'client' => 'predis',
+                'default' => [
+                    'host' => env('REDIS_HOST', '127.0.0.1'),
+                    'password' => env('REDIS_PASSWORD', null),
+                    'port' => env('REDIS_PORT', 6380),
+                    'database' => 0,
+                ],
+            ]
+        ]);
+    }
 
     public function testNormalCache() {
         /** @var AlternativeRedisCacheStore $redisStore */

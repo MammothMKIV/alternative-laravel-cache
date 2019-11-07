@@ -1,2 +1,5 @@
 .env
 .idea
+vendor
+*.iml
+composer.lock
